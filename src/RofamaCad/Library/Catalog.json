@@ -1,0 +1,15 @@
+{
+  "version":"0.1",
+  "units":"meters",
+  "categories":[
+    {"id":"doors","name":"Portas","items":[]},
+    {"id":"windows","name":"Janelas","items":[]},
+    {"id":"furniture","name":"Mobiliário","items":[]},
+    {"id":"sanitary","name":"Louças","items":[]},
+    {"id":"sinks","name":"Pias e bancadas","items":[]},
+    {"id":"electrical","name":"Elétrica","items":[]},
+    {"id":"plumbing","name":"Hidráulica","items":[]},
+    {"id":"hvac","name":"HVAC","items":[]},
+    {"id":"fire","name":"Incêndio","items":[]}
+  ]
+}
