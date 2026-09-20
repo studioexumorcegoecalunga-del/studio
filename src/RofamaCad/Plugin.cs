@@ -223,7 +223,7 @@ public sealed class Plugin : IExtensionApplication
         AddPanel(tab, "Pavimentos", new[] { ("Novo","RFPAVIMENTO "),("Ativo","RFPAVIMENTOATIVO "),("Listar","RFLISTARPAVIMENTOS "),("Vincular","RFVINCULARPAVIMENTO "),("Nível","RFNIVEL ") });
         AddPanel(tab, "Cobertura / 3D", new[] { ("2 Águas","RFTELHADO2AGUAS "),("2 Águas 3D","RFTELHADO2AGUAS3D "),("4 Águas 3D","RFTELHADO4AGUAS3D "),("Paredes 3D","RFGERAR3D "),("Atualizar 3D","RFATUALIZAR3D "),("Lajes 3D","RFGERARLAJES3D "),("Platibanda 3D","RFPLATIBANDA3D ") });
         AddPanel(tab, "Documentação", new[] { ("Cotar","RFCOTAR "),("Esquadrias","RFQUADROESQUADRIAS "),("Quantitativo","RFQUANTITATIVO "),("Corte","RFCORTE "),("Fachada","RFFACHADA "),("Validar","RFVALIDAR ") });
-        AddPanel(tab, "Estrutural", new[] { ("Configurar","RFESTCONFIG "),("Auto lançar","RFESTRUTURA "),("Pilar","RFPILAR "),("Viga","RFVIGA "),("Laje","RFLAJEEST "),("Estrutura 3D","RFESTRUTURA3D "),("Numerar","RFESTNUMERAR "),("Carga Laje","RFCARGALAJE "),("Sapata","RFSAPATA "),("Grafo","RFESTGRAFO "),("Formas","RFFORMAS "),("Relatório","RFESTRELATORIO ") });
+        AddPanel(tab, "Estrutural", new[] { ("Configurar","RFESTCONFIG "),("Auto lançar","RFESTRUTURA "),("Pilar","RFPILAR "),("Viga","RFVIGA "),("Laje","RFLAJEEST "),("Estrutura 3D","RFESTRUTURA3D "),("Numerar","RFESTNUMERAR "),("Carga Laje","RFCARGALAJE "),("Sapata","RFSAPATA "),("Grafo","RFESTGRAFO "),("Formas","RFFORMAS "),("Relatório","RFESTRELATORIO "),("Distribuir Cargas","RFDISTRIBUIRCARGAS "),("Rel. Cargas","RFCARGASRELATORIO ") });
         AddPanel(tab, "Biblioteca / Projeto", new[] { ("Biblioteca","RFBIBLIOTECA "),("Símbolos","RFSIMBOLO "),("Configurar","RFCONFIG "),("Sobre","RFSOBRE ") });
     }
 
