@@ -5,6 +5,7 @@ using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Windows;
 using AcApp = Autodesk.AutoCAD.ApplicationServices.Application;
+using RofamaCad.Core;
 
 [assembly: CommandClass(typeof(RofamaCad.Plugin))]
 
@@ -44,7 +45,7 @@ public sealed class Plugin : IExtensionApplication
         using var tr = Db().TransactionManager.StartTransaction();
         EnsureLayer(tr, WallLayer);
         var pl = WallPolygon(a.Value, b.Value, w.Value); pl.Layer = WallLayer;
-        Append(tr, pl); SetData(pl, tr, "PAREDE", w.Value, DefaultHeight, 0, "");
+        Append(tr, pl); SetData(pl, tr, "PAREDE", w.Value, DefaultHeight, 0, ""); StoreyService.Tag(pl, tr, Db());
         tr.Commit();
     }
 
@@ -60,7 +61,7 @@ public sealed class Plugin : IExtensionApplication
         using var tr = Db().TransactionManager.StartTransaction();
         EnsureLayer(tr, RoomLayer);
         var t = new DBText { Position = p.Value, TextString = name.StringResult, Height = 0.20, Layer = RoomLayer };
-        Append(tr, t); SetData(t, tr, "AMBIENTE", 0, 0, 0, name.StringResult); tr.Commit();
+        Append(tr, t); SetData(t, tr, "AMBIENTE", 0, 0, 0, name.StringResult); StoreyService.Tag(t, tr, Db()); tr.Commit();
     }
 
     [CommandMethod("RFAREA")]
@@ -77,7 +78,7 @@ public sealed class Plugin : IExtensionApplication
         if (!pl.Closed) { ed.WriteMessage("\nA polilinha precisa estar fechada."); return; }
         EnsureLayer(tr, RoomLayer);
         var mt = new MText { Location = p.Value, TextHeight = 0.18, Contents = $"{name.StringResult}\\P{pl.Area:0.00} m²", Layer = RoomLayer };
-        Append(tr, mt); SetData(mt, tr, "AREA", pl.Area, 0, 0, name.StringResult); tr.Commit();
+        Append(tr, mt); SetData(mt, tr, "AREA", pl.Area, 0, 0, name.StringResult); StoreyService.Tag(mt, tr, Db()); tr.Commit();
     }
 
     [CommandMethod("RFCOTAR")]
@@ -126,7 +127,7 @@ public sealed class Plugin : IExtensionApplication
         pl.AddVertexAt(3, c - v * w.Value / 2 + n * d, 0, 0, 0);
         pl.Closed = true; pl.Layer = layer; Append(tr, pl);
         var code = type == "PORTA" ? $"P{_doorSeq++:00}" : $"J{_windowSeq++:00}";
-        SetData(pl, tr, type, w.Value, height, sill, code);
+        SetData(pl, tr, type, w.Value, height, sill, code); StoreyService.Tag(pl, tr, Db());
         var tx = new DBText { Position = p.Value + new Vector3d(.10, .10, 0), TextString = code, Height = .15, Layer = layer };
         Append(tr, tx); tr.Commit();
     }
@@ -218,9 +219,17 @@ public sealed class Plugin : IExtensionApplication
     {
         var ribbon = ComponentManager.Ribbon; if (ribbon == null || ribbon.Tabs.Any(t => t.Id == "ROFAMA_TAB")) return;
         var tab = new RibbonTab { Title = "ROFAMA CAD", Id = "ROFAMA_TAB" }; ribbon.Tabs.Add(tab);
-        var src = new RibbonPanelSource { Title = "Arquitetura / 3D" }; tab.Panels.Add(new RibbonPanel { Source = src });
-        foreach (var item in new[] { ("Parede","RFPAREDE "),("Porta","RFPORTA "),("Janela","RFJANELA "),("Ambiente","RFAMBIENTE "),("Área","RFAREA "),("Esquadrias","RFESQUADRIAS "),("Cotar","RFCOTAR "),("Gerar 3D","RFGERAR3D "),("Atualizar 3D","RFATUALIZAR3D ") })
-            src.Items.Add(new RibbonButton { Text = item.Item1, ShowText = true, CommandParameter = item.Item2, CommandHandler = new RibbonCommand() });
+        AddPanel(tab, "Arquitetura", new[] { ("Parede","RFPAREDE "),("Porta 2","RFPORTA2 "),("Janela 2","RFJANELA2 "),("Ambiente","RFAMBIENTE "),("Área","RFAREA "),("Piso","RFPISO "),("Laje","RFLAJE "),("Escada","RFESCADA "),("Platibanda","RFPLATIBANDA ") });
+        AddPanel(tab, "Pavimentos", new[] { ("Novo","RFPAVIMENTO "),("Ativo","RFPAVIMENTOATIVO "),("Listar","RFLISTARPAVIMENTOS "),("Vincular","RFVINCULARPAVIMENTO "),("Nível","RFNIVEL ") });
+        AddPanel(tab, "Cobertura / 3D", new[] { ("2 Águas","RFTELHADO2AGUAS "),("2 Águas 3D","RFTELHADO2AGUAS3D "),("4 Águas 3D","RFTELHADO4AGUAS3D "),("Paredes 3D","RFGERAR3D "),("Atualizar 3D","RFATUALIZAR3D "),("Lajes 3D","RFGERARLAJES3D "),("Platibanda 3D","RFPLATIBANDA3D ") });
+        AddPanel(tab, "Documentação", new[] { ("Cotar","RFCOTAR "),("Esquadrias","RFQUADROESQUADRIAS "),("Quantitativo","RFQUANTITATIVO "),("Corte","RFCORTE "),("Fachada","RFFACHADA "),("Validar","RFVALIDAR ") });
+        AddPanel(tab, "Biblioteca / Projeto", new[] { ("Biblioteca","RFBIBLIOTECA "),("Símbolos","RFSIMBOLO "),("Configurar","RFCONFIG "),("Sobre","RFSOBRE ") });
+    }
+
+    static void AddPanel(RibbonTab tab, string title, IEnumerable<(string Text,string Command)> items)
+    {
+        var src = new RibbonPanelSource { Title = title }; tab.Panels.Add(new RibbonPanel { Source = src });
+        foreach (var item in items) src.Items.Add(new RibbonButton { Text = item.Text, ShowText = true, CommandParameter = item.Command, CommandHandler = new RibbonCommand() });
     }
 
     sealed class RibbonCommand : System.Windows.Input.ICommand
