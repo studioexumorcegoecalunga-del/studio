@@ -12,3 +12,8 @@
 | RFESQUADRIAS | Levantamento de esquadrias |
 | RFGERAR3D | Gerar paredes 3D |
 | RFATUALIZAR3D | Regenerar 3D |
+
+| RFQUADROESQUADRIAS | Gera tabela gráfica de portas e janelas |
+| RFPISO | Cria piso a partir de contorno fechado |
+| RFLAJE | Cria laje a partir de contorno fechado |
+| RFCOBERTURA | Registra cobertura e inclinação |
