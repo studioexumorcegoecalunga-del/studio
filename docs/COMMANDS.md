@@ -17,3 +17,7 @@
 | RFPISO | Cria piso a partir de contorno fechado |
 | RFLAJE | Cria laje a partir de contorno fechado |
 | RFCOBERTURA | Registra cobertura e inclinação |
+
+| RFPORTA2 | Porta arquitetônica com batentes, folha e arco |
+| RFJANELA2 | Janela arquitetônica com linhas de caixilho |
+| RFGERARLAJES3D | Converte pisos/lajes ROFAMA em sólidos 3D |
