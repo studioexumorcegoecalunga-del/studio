@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage SchemaVersion="1.0" AppVersion="1.0.0" ProductCode="{B8B61E36-48D9-4F45-923A-8D2D84E29D02}" Name="ROFAMA CAD PRO">
+  <CompanyDetails Name="ROFAMA" />
+  <Components>
+    <RuntimeRequirements OS="Win64" Platform="AutoCAD*" SeriesMin="R25.1" SeriesMax="R25.1" />
+    <ComponentEntry AppName="ROFAMA CAD PRO" Version="1.0.0" ModuleName="./Contents/Windows/RofamaCad.dll" AppType=".Net" LoadOnAutoCADStartup="True" />
+  </Components>
+</ApplicationPackage>
