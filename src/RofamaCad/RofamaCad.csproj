@@ -2,13 +2,12 @@
   <PropertyGroup>
     <TargetFramework Condition="'$(RofamaTarget)' != 'Net10'">net8.0-windows</TargetFramework>
     <TargetFramework Condition="'$(RofamaTarget)' == 'Net10'">net10.0-windows</TargetFramework>
-    <PlatformTarget>x64</PlatformTarget>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AssemblyName>RofamaCad</AssemblyName>
-    <RootNamespace>RofamaCad</RootNamespace>
+    <PlatformTarget>x64</PlatformTarget><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><AssemblyName>RofamaCad</AssemblyName><RootNamespace>RofamaCad</RootNamespace>
   </PropertyGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(UseNuGetAcad)' == 'true'">
+    <PackageReference Include="AutoCAD.NET" Version="25.1.1" ExcludeAssets="runtime" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseNuGetAcad)' != 'true'">
     <Reference Include="AcCoreMgd"><HintPath>$(ACAD_DIR)\AcCoreMgd.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="AcDbMgd"><HintPath>$(ACAD_DIR)\AcDbMgd.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="AcMgd"><HintPath>$(ACAD_DIR)\AcMgd.dll</HintPath><Private>false</Private></Reference>
