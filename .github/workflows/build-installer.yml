@@ -1,0 +1,43 @@
+name: Build ROFAMA CAD PRO Installer
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths: [ 'src/**', 'ROFAMACAD.bundle/**', 'installer/**', '.github/workflows/build-installer.yml' ]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+      - name: Build .NET 8
+        shell: pwsh
+        run: dotnet build src/RofamaCad/RofamaCad.csproj -c Release -p:RofamaTarget=Net8 -p:UseNuGetAcad=true
+      - name: Copy .NET 8
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force ROFAMACAD.bundle/Contents/Net8 | Out-Null
+          Copy-Item src/RofamaCad/bin/Release/net8.0-windows/RofamaCad.dll ROFAMACAD.bundle/Contents/Net8/
+      - name: Build .NET 10
+        shell: pwsh
+        run: dotnet build src/RofamaCad/RofamaCad.csproj -c Release -p:RofamaTarget=Net10 -p:UseNuGetAcad=true
+      - name: Copy .NET 10
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force ROFAMACAD.bundle/Contents/Net10 | Out-Null
+          Copy-Item src/RofamaCad/bin/Release/net10.0-windows/RofamaCad.dll ROFAMACAD.bundle/Contents/Net10/
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup -y --no-progress
+      - name: Compile installer
+        shell: pwsh
+        run: '& "$env:ProgramFiles(x86)\Inno Setup 6\ISCC.exe" installer\ROFAMACAD.iss'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ROFAMA-CAD-PRO-Setup
+          path: dist/ROFAMA-CAD-PRO-Setup-1.0.0.exe
+          if-no-files-found: error
