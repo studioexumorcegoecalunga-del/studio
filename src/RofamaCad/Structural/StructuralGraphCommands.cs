@@ -17,5 +17,5 @@ public sealed class StructuralGraphCommands
  }
  static Point3d Mid(Extents3d e)=>new((e.MinPoint.X+e.MaxPoint.X)/2,(e.MinPoint.Y+e.MaxPoint.Y)/2,0);
  static bool Overlap(Extents3d a,Extents3d b,double t)=>a.MinPoint.X<=b.MaxPoint.X+t&&a.MaxPoint.X>=b.MinPoint.X-t&&a.MinPoint.Y<=b.MaxPoint.Y+t&&a.MaxPoint.Y>=b.MinPoint.Y-t;
- static double DistToSegment(Point3d p,Point3d a,Point3d b){var ab=b-a,ap=p-a;var den=ab.DotProduct(ab);if(den<1e-12)return p.DistanceTo(a);var t=Math.Max(0,Math.Min(1,ap.DotProduct(ab)/den));return p.DistanceTo(a+ab*t);}
+ static double DistToSegment(Point3d p,Point3d a,Point3d b){var ab=b-a; var ap=p-a;var den=ab.DotProduct(ab);if(den<1e-12)return p.DistanceTo(a);var t=Math.Max(0,Math.Min(1,ap.DotProduct(ab)/den));return p.DistanceTo(a+ab*t);}
 }
