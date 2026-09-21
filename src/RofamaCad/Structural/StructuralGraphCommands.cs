@@ -12,7 +12,7 @@ public sealed class StructuralGraphCommands
   using var tr=db.TransactionManager.StartTransaction();var ms=(BlockTableRecord)tr.GetObject(SymbolUtilityServices.GetBlockModelSpaceId(db),OpenMode.ForRead);
   var cols=new List<(ObjectId Id,Point3d C)>();var beams=new List<(ObjectId Id,Line L)>();var slabs=new List<(ObjectId Id,Extents3d E)>();
   foreach(ObjectId id in ms){if(tr.GetObject(id,OpenMode.ForRead) is not Entity e)continue;if(e.Layer=="RF-EST-PILAR"&&e is Polyline p){var x=p.GeometricExtents;cols.Add((id,Mid(x)));}else if(e.Layer=="RF-EST-VIGA"&&e is Line l)beams.Add((id,l));else if(e.Layer=="RF-EST-LAJE"&&e is Polyline s)slabs.Add((id,s.GeometricExtents));}
-  int bc=0,sb=0;foreach(var b in beams)foreach(var c in cols)if(DistToSegment(c.C,b.L.StartPoint,b.L.EndPoint)<=.25)bc++;foreach(var s in slabs)foreach(var b in beams)if(Overlap(s.E,b.L.GeometricExtents,.10))sb++;
+  int bc=0; int sb=0;foreach(var b in beams)foreach(var c in cols)if(DistToSegment(c.C,b.L.StartPoint,b.L.EndPoint)<=.25)bc++;foreach(var s in slabs)foreach(var b in beams)if(Overlap(s.E,b.L.GeometricExtents,.10))sb++;
   tr.Commit();d.Editor.WriteMessage($"\nGrafo estrutural: {slabs.Count} laje(s), {beams.Count} viga(s), {cols.Count} pilar(es), {sb} relação(ões) laje-viga e {bc} relação(ões) viga-pilar detectadas.");
  }
  static Point3d Mid(Extents3d e)=>new((e.MinPoint.X+e.MaxPoint.X)/2,(e.MinPoint.Y+e.MaxPoint.Y)/2,0);
