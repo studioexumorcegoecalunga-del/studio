@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup Condition="'$(UseNuGetAcad)' == 'true'">
     <PackageReference Include="AutoCAD.NET" Version="25.1.0" ExcludeAssets="runtime" />
+    <PackageReference Include="AutoCAD.NET.Core" Version="25.1.0" ExcludeAssets="runtime" />
   </ItemGroup>
   <ItemGroup Condition="'$(UseNuGetAcad)' != 'true'">
     <Reference Include="AcCoreMgd"><HintPath>$(ACAD_DIR)\AcCoreMgd.dll</HintPath><Private>false</Private></Reference>
