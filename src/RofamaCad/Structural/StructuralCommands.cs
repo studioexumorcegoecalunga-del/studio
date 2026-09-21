@@ -8,7 +8,7 @@ using AcApp=Autodesk.AutoCAD.ApplicationServices.Application;
 namespace RofamaCad.Structural;
 public sealed class StructuralCommands
 {
- const string Col="RF-EST-PILAR",Beam="RF-EST-VIGA",Slab="RF-EST-LAJE";
+ const string Col="RF-EST-PILAR",Beam="RF-EST-VIGA",SlabLayer="RF-EST-LAJE";
  [CommandMethod("RFESTRUTURA")]
  public void Generate(){
   var d=AcApp.DocumentManager.MdiActiveDocument;var ed=d.Editor;var db=d.Database;
@@ -26,7 +26,7 @@ public sealed class StructuralCommands
  [CommandMethod("RFLAJEEST")]
  public void Slab(){
   var d=AcApp.DocumentManager.MdiActiveDocument;var ed=d.Editor;var db=d.Database;var o=new PromptEntityOptions("\nSelecione contorno fechado da laje: ");o.SetRejectMessage("\nSelecione polilinha.");o.AddAllowedClass(typeof(Polyline),true);var r=ed.GetEntity(o);if(r.Status!=PromptStatus.OK)return;
-  using var tr=db.TransactionManager.StartTransaction();var p=(Polyline)tr.GetObject(r.ObjectId,OpenMode.ForRead);if(!p.Closed){ed.WriteMessage("\nContorno deve estar fechado.");return;}Ensure(tr,db,Slab);var cp=(Polyline)p.Clone();cp.Layer=Slab;var ms=(BlockTableRecord)tr.GetObject(SymbolUtilityServices.GetBlockModelSpaceId(db),OpenMode.ForWrite);ms.AppendEntity(cp);tr.AddNewlyCreatedDBObject(cp,true);Tag(cp,tr,db,"LAJE","L01");tr.Commit();
+  using var tr=db.TransactionManager.StartTransaction();var p=(Polyline)tr.GetObject(r.ObjectId,OpenMode.ForRead);if(!p.Closed){ed.WriteMessage("\nContorno deve estar fechado.");return;}Ensure(tr,db,SlabLayer);var cp=(Polyline)p.Clone();cp.Layer=SlabLayer;var ms=(BlockTableRecord)tr.GetObject(SymbolUtilityServices.GetBlockModelSpaceId(db),OpenMode.ForWrite);ms.AppendEntity(cp);tr.AddNewlyCreatedDBObject(cp,true);Tag(cp,tr,db,"LAJE","L01");tr.Commit();
  }
  static void Tag(Entity e,Transaction tr,Database db,string type,string code){StoreyService.Tag(e,tr,db);if(e.ExtensionDictionary.IsNull)e.CreateExtensionDictionary();var d=(DBDictionary)tr.GetObject(e.ExtensionDictionary,OpenMode.ForWrite);var x=new Xrecord{Data=new ResultBuffer(new TypedValue((int)DxfCode.Text,type),new TypedValue((int)DxfCode.Text,code),new TypedValue((int)DxfCode.Text,"PRELIMINAR_NAO_DIMENSIONADO"))};d.SetAt("ROFAMA_STRUCT",x);tr.AddNewlyCreatedDBObject(x,true);}
  static bool TryIntersection((Point3d A,Point3d B)a,(Point3d A,Point3d B)b,out Point3d p){p=Point3d.Origin;var x1=a.A.X;double y1=a.A.Y,x2=a.B.X,y2=a.B.Y,x3=b.A.X,y3=b.A.Y,x4=b.B.X,y4=b.B.Y;var den=(x1-x2)*(y3-y4)-(y1-y2)*(x3-x4);if(Math.Abs(den)<1e-9)return false;var px=((x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4))/den;var py=((x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4))/den;if(px<Math.Min(x1,x2)-.01||px>Math.Max(x1,x2)+.01||py<Math.Min(y1,y2)-.01||py>Math.Max(y1,y2)+.01)return false;if(px<Math.Min(x3,x4)-.01||px>Math.Max(x3,x4)+.01||py<Math.Min(y3,y4)-.01||py>Math.Max(y3,y4)+.01)return false;p=new Point3d(px,py,0);return true;}
